@@ -17,6 +17,26 @@ function getCallId(req, res) {
     });
   }
 }
+function getAnswer(req, res) {
+  console.log("get ");
+  try {
+    console.log("get answer");
+    let data = readFileSync("answer.json");
+    res.status(200).send({
+      success: true,
+      message: "Answer retrieved successfully",
+      data: JSON.stringify(JSON.parse(data)),
+    });
+    unlinkSync("answer.json");
+  } catch (error) {
+    console.log(error.message);
+    res.status(300).send({
+      success: false,
+      message: "Error retrieving answer",
+      data: null,
+    });
+  }
+}
 function makeCallId(req, res) {
   try {
     writeFileSync("callId.json", JSON.stringify(req.body));
@@ -34,14 +54,6 @@ function makeCallId(req, res) {
   }
 }
 function makeAnswer(req, res) {
-  if (req.body.type !== "offer") {
-    res.status(300).send({
-      success: false,
-      message: "No Caller ID provided",
-      data: null,
-    });
-  }
-  console.log(req.body);
   try {
     writeFileSync("answer.json", JSON.stringify(req.body));
     res.status(200).send({
@@ -50,29 +62,12 @@ function makeAnswer(req, res) {
       data: null,
     });
   } catch (error) {
-    res.status(500).send({
+    res.status(300).send({
       success: false,
       message: "Error creating answer",
       data: error.message,
     });
   }
 }
-function getAnswer(req, res) {
-  try {
-    let data = readFileSync("answer.json");
 
-    res.status(200).send({
-      success: true,
-      message: "Answer retrieved successfully",
-      data: JSON.stringify(JSON.parse(data)),
-    });
-    unlinkSync("answer.json");
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: "Error retrieving answer",
-      data: error.message,
-    });
-  }
-}
 module.exports = { getCallId, makeCallId, makeAnswer, getAnswer };
