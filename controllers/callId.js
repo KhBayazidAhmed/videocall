@@ -3,11 +3,10 @@ const { writeFileSync, readFileSync, unlinkSync } = require("fs");
 function getCallId(req, res) {
   try {
     let data = readFileSync("callId.json");
-
     res.status(200).send({
       success: true,
       message: "Call ID retrieved successfully",
-      data: JSON.parse(data),
+      data: JSON.stringify(JSON.parse(data)),
     });
     unlinkSync("callId.json");
   } catch (error) {
@@ -19,13 +18,6 @@ function getCallId(req, res) {
   }
 }
 function makeCallId(req, res) {
-  if (!req.body) {
-    res.status(300).send({
-      success: false,
-      message: "No Caller ID provided",
-      data: null,
-    });
-  }
   try {
     writeFileSync("callId.json", JSON.stringify(req.body));
     res.status(200).send({
@@ -49,6 +41,7 @@ function makeAnswer(req, res) {
       data: null,
     });
   }
+  console.log(req.body);
   try {
     writeFileSync("answer.json", JSON.stringify(req.body));
     res.status(200).send({
@@ -71,7 +64,7 @@ function getAnswer(req, res) {
     res.status(200).send({
       success: true,
       message: "Answer retrieved successfully",
-      data: JSON.parse(data),
+      data: JSON.stringify(JSON.parse(data)),
     });
     unlinkSync("answer.json");
   } catch (error) {
